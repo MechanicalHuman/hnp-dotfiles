@@ -300,7 +300,7 @@ function configure_osx(){
   defaults write com.apple.finder EmptyTrashSecurely -bool true
 
   log debug "Restart automatically if the computer freezes"
-  systemsetup -setrestartfreeze on
+  sudo systemsetup -setrestartfreeze on
 
   log success "Succesfully configured MacOS"
 }

@@ -183,5 +183,47 @@ function pm2 () {
   $(which pm2) "$@"
 }
 
+function set_project() {
+  local DEST=$PWD
+  if [ -z "$1" ]; then
+    chalk red "You need to pass the shorcut to the project in dot notation"
+    return 1;
+  fi
+  if [ ! -z "$2" ]; then
+    DEST=$2
+  fi
+
+  if [ ! -f ~/.projects ]; then
+    echo "#!/bin/bash" > ~/.projects
+  fi
+
+  echo "alias p.$1='open_project $DEST'" >> ~/.projects
+  chalk green "Added p.$1 as a shorcut to $DEST"
+}
+
+function open_project(){
+  cd "$1" || exit
+
+  local _hasp=0
+  if [ "$(git rev-parse --is-inside-work-tree &>/dev/null; echo $?)" -eq '0' ]; then
+    git status
+  fi
+
+  if [ -f ./package.json ]; then
+    if [ ! -d ./node_modules ]; then
+      npm install
+    fi
+
+    if [ "$( jq '.scripts | has("todos")' < ./package.json )" == "true" ]; then
+      npm run 'todos' -s || true
+       _hasp=1
+    fi
+
+  fi
+
+  if [ $_hasp -eq 0 ]; then
+   npx leasot './**/*.{js,css,html,pug,scss,sh,less}' --ignore 'node_modules/**/*'
+  fi
+}
 
 
