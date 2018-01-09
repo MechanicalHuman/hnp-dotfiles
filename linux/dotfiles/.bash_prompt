@@ -1,0 +1,164 @@
+#!/bin/bash
+
+function prompt() {
+
+    local wd='\w'
+
+    local tabstyle="\[\033]0;\w\007"
+
+    local reset="\[\e[0m\]"
+    local bold="\[\e[1m\]";
+    local dim="\[\e[2m\]";
+    local black="\[\e[30m\]";
+    local red="\[\e[31m\]";
+    local green="\[\e[32m\]";
+    local yellow="\[\e[33m\]";
+    local blue="\[\e[34m\]";
+    local magenta="\[\e[35m\]";
+    local cyan="\[\e[36m\]";
+    local white="\[\e[37m\]";
+
+
+    if [ $? -eq 0 ]; then
+        exitColor="$green"
+    else
+        exitColor="$red"
+    fi
+
+    # Highlight the user name when logged in as root.
+    if [[ "${USER}" == "root" ]]; then
+        userStyle="$bold$red";
+    else
+        userStyle="$yellow";
+    fi;
+
+    # Highlight the hostname when connected via SSH.
+    if [[ "${SSH_TTY}" ]]; then
+        hostStyle="$bold$green";
+    else
+        hostStyle="$green";
+    fi;
+
+    function strip {
+        local STRING=${1#$"$2"}
+        echo ${STRING%$"$2"}
+    }
+
+    function prompt_git() {
+        branchName=""
+
+        get_git_branch() {
+            echo "$(git symbolic-ref --quiet --short HEAD 2> /dev/null || git rev-parse --short HEAD 2> /dev/null || echo '(unknown)')";
+        }
+
+        is_branch1_behind_branch2 () {
+            # Find the first log (if any) that is in branch1 but not branch2
+            first_log="$(git log $1..$2 -1 2> /dev/null)"
+
+            # Exit with 0 if there is a first log, 1 if there is not
+            [[ -n "$first_log" ]]
+        }
+
+        branch_exists () {
+            # List remote branches           | # Find our branch and exit with 0 or 1 if found/not found
+            git branch --remote 2> /dev/null | grep --quiet "$1"
+        }
+
+        parse_git_ahead () {
+            # Grab the local and remote branch
+            branch="$(get_git_branch)"
+            remote="$(git config --get "branch.${branch}.remote" || echo -n "origin")"
+            remote_branch="$remote/$branch"
+
+            # If the remote branch is behind the local branch        || or it has not been merged into origin (remote branch doesn't exist)
+            if (is_branch1_behind_branch2 "$remote_branch" "$branch" || ! branch_exists "$remote_branch"); then
+                echo 1
+            fi
+        }
+
+        parse_git_behind () {
+            # Grab the branch
+            branch="$(get_git_branch)"
+            remote="$(git config --get "branch.${branch}.remote" || echo -n "origin")"
+            remote_branch="$remote/$branch"
+            # If the local branch is behind the remote branch
+            if is_branch1_behind_branch2 "$branch" "$remote_branch"; then
+                echo 1
+            fi
+        }
+
+        parse_git_dirty() {
+            # If the git status has *any* changes (e.g. dirty), echo our character
+            if [[ -n "$(git status --porcelain 2> /dev/null)" ]]; then
+                echo 1
+            fi
+        }
+
+
+        get_git_status() {
+
+            output="$bold"
+
+            if [[ "$dirty_branch" == 1 ]]; then
+                synced_symbol="● $branchName"
+                unpushed_symbol="▲ $branchName"
+                unpulled_symbol="▼ $branchName"
+                unpushed_unpulled_symbol="⬢ $branchName"
+            else
+                synced_symbol="◎ $branchName"
+                unpushed_symbol="△ $branchName"
+                unpulled_symbol="▽ $branchName"
+                unpushed_unpulled_symbol="⬡ $branchName"
+            fi;
+
+            if [[ "$branch_ahead" == 1 && "$branch_behind" == 1 ]]; then
+                output+="$red$unpushed_unpulled_symbol"
+            elif [[ "$branch_behind" == 1 ]]; then
+                output+="$yellow$unpulled_symbol"
+            elif [[ "$branch_ahead" == 1 ]]; then
+                output+="$cyan$unpushed_symbol"
+            else
+                output+="$green$synced_symbol"
+            fi
+
+            echo -e "$reset$output$reset"
+        }
+
+        # Check if the current directory is in a Git repository.
+        if [ $(git rev-parse --is-inside-work-tree &>/dev/null; echo "${?}") == '0' ]; then
+
+            branchName="$(get_git_branch)"
+
+            # check if the current directory is in .git before running git checks
+            if [ "$(git rev-parse --is-inside-git-dir 2> /dev/null)" == 'false' ]; then
+                # Ensure the index is up to date.
+                git update-index --really-refresh -q &>/dev/null;
+
+                dirty_branch="$(parse_git_dirty)"
+                branch_ahead="$(parse_git_ahead)"
+                branch_behind="$(parse_git_behind)"
+
+                echo -e " $(get_git_status)";
+            else
+                echo -e " $reset$branchName$reset";
+            fi;
+
+        else
+            return;
+        fi;
+    }
+
+    if [ -z "${debian_chroot:-}" ] && [ -r /etc/debian_chroot ]; then
+        debian_chroot=$(cat /etc/debian_chroot)
+    fi
+
+    history -a
+    history -c
+    history -r
+
+    export COLUMNS=${COLUMNS}
+    export PS1="$tabstyle$reset${debian_chroot:+($debian_chroot)}$userStyle\u$reset$dim$white:$reset$hostStyle\h$reset$dim$white in $reset$white$wd$(prompt_git)$reset\n$exitColor$PS_SYMBOL$reset "
+
+}
+
+export PROMPT_COMMAND=prompt
