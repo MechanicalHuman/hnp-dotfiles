@@ -160,7 +160,7 @@ function configure_dotfiles(){
   linkme "$LIBDIR/git/.gitignore" "$HOME/.gitignore"
 
   rm -f "$HOME/.gitconfig"
-  cp -f "$DOTPATH/git/.gitconfig" "$HOME/.gitconfig"
+  cp -f "$LIBDIR/git/.gitconfig" "$HOME/.gitconfig"
   git config --global user.name "$NAME"
   git config --global user.email "$EMAIL"
 

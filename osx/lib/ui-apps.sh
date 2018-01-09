@@ -20,7 +20,7 @@ launchctl setenv PATH "$PATH"
 # ----------------------------------------------------------------------
 
 rm -f "$HOME/.gitconfig"
-cp -f "$HOME/.config/git/.gitconfig" "$HOME/.gitconfig"
+cp -f "$HOME/.config/dotfiles/git/.gitconfig" "$HOME/.gitconfig"
 
 git config --global user.name "$NAME"
 git config --global user.email "$EMAIL"
