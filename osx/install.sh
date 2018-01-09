@@ -125,8 +125,8 @@ function install_homebrew(){
 function update_bash(){
   log info "Configuring: Bash4 as the default shell"
   if [ "$(grep -c /private/etc/shells /usr/local/bin/bash)" -eq 0 ]; then
-    bash -c 'echo -e /usr/local/bin/bash >> /private/etc/shells'
-    chsh -s '/usr/local/bin/bash' 2> /dev/null
+    sudo bash -c 'echo -e /usr/local/bin/bash >> /private/etc/shells'
+    sudo chsh -s '/usr/local/bin/bash' 2> /dev/null
     log success "Bash4 configured as default shell"
   else
     log warn "usr/local/bin/bash seems to exist already in your shell options"
@@ -154,9 +154,10 @@ function configure_dotfiles(){
   linkme "$LIBDIR/bash/promt.sh" "$DOTPATH/bash/promt.sh"
 
   log debug "Configuring: GIT"
-  linkme "$LIBDIR/git/.gitattributes" "$DOTPATH/git/.gitattributes"
-  linkme "$LIBDIR/git/.gitignore" "$DOTPATH/git/.gitignore"
+
   linkme "$LIBDIR/git/.gitconfig" "$DOTPATH/git/.gitconfig"
+  linkme "$LIBDIR/git/.gitattributes" "$HOME/.gitattributes"
+  linkme "$LIBDIR/git/.gitignore" "$HOME/.gitignore"
 
   rm -f "$HOME/.gitconfig"
   cp -f "$DOTPATH/git/.gitconfig" "$HOME/.gitconfig"
