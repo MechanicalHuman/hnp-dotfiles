@@ -21,7 +21,9 @@ function prompt() {
     local exitColor="$green"
     local workingDir='\w'
 
-
+    if [ ! "$SHLVL" -eq 1 ]; then
+      PS_SYMBOL='❯'
+    fi
 
     # Highlight the hostname when connected via SSH.
     if [ -n "$SSH_TTY" ]; then
