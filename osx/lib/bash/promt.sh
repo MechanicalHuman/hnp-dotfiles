@@ -4,7 +4,8 @@ prompt() {
 
     local EXIT="$?"
 
-    local PS_SYMBOL='λ'
+    local prompt_symbol='λ'
+    local tab_name='\W'
 
     local reset='\[\e[0m\]'
     local bold='\[\e[1m\]'
@@ -15,37 +16,39 @@ prompt() {
     local cyan='\[\e[36m\]'
     local white='\[\e[37m\]'
 
-    local tabstyle='\[\033]0;\w\007'
-    local userStyle="$yellow"
-    local hostStyle="$green"
-    local exitColor="$green"
-    local workingDir='\w'
 
-    if [ ! "$SHLVL" -eq 1 ]; then
-      PS_SYMBOL='❯'
-    fi
-
-    # Highlight the hostname when connected via SSH.
-    if [ -n "$SSH_TTY" ]; then
-      hostStyle="$bold$green"
-    fi
-
-    # Highlight the user name when logged in as root.
-    if [ "$EUID" -eq 0 ]; then userStyle="$bold$red\\a"; fi
-
-    # Set the lambda as red if last comand exited with non 0
-    if [ $EXIT != 0 ]; then exitColor="$red"; fi
+    local user_color="$yellow"
+    local host_tyle="$green"
+    local exit_color="$green"
 
 
     # If a package.json on the WD, use the package name as the WD
     if [ -f ./package.json ]; then
-        workingDir=$( jq '.name' < ./package.json | sed -e 's/\"//g' )
+        tab_name="$( jq '.name' < ./package.json | sed -e 's/\"//g' ) "
     fi
 
+    if [ ! "$SHLVL" -eq 1 ]; then
+      prompt_symbol='❯'
+    fi
+# \s-\v\$
+    # Highlight the hostname when connected via SSH.
+    if [ -n "$SSH_TTY" ]; then
+      host_tyle="$bold$green"
+      tab_name="\\h - $tab_name"
+    fi
 
+    # Highlight the user name when logged in as root.
+    if [ "$EUID" -eq 0 ]; then user_color="$bold$red"; fi
+
+    # Set the lambda as red if last comand exited with non 0
+    if [ $EXIT != 0 ]; then exit_color="$red\\a"; fi
+
+    set_tab_name() {
+      printf '\e]1;%s\a' "$tab_name"
+    }
 
     prompt_git() {
-        branchName=""
+        local branch_name=""
 
         get_git_branch() {
           git symbolic-ref --quiet --short HEAD 2> /dev/null || git rev-parse --short HEAD 2> /dev/null || echo '(unknown)'
@@ -100,15 +103,15 @@ prompt() {
             output="$bold"
 
             if [[ "$dirty_branch" == 1 ]]; then
-                synced_symbol="● $branchName"
-                unpushed_symbol="▲ $branchName"
-                unpulled_symbol="▼ $branchName"
-                unpushed_unpulled_symbol="⬢ $branchName"
+                synced_symbol="● $branch_name"
+                unpushed_symbol="▲ $branch_name"
+                unpulled_symbol="▼ $branch_name"
+                unpushed_unpulled_symbol="⬢ $branch_name"
             else
-                synced_symbol="◎ $branchName"
-                unpushed_symbol="△ $branchName"
-                unpulled_symbol="▽ $branchName"
-                unpushed_unpulled_symbol="⬡ $branchName"
+                synced_symbol="◎ $branch_name"
+                unpushed_symbol="△ $branch_name"
+                unpulled_symbol="▽ $branch_name"
+                unpushed_unpulled_symbol="⬡ $branch_name"
             fi;
 
             if [[ "$branch_ahead" == 1 && "$branch_behind" == 1 ]]; then
@@ -127,7 +130,7 @@ prompt() {
         # Check if the current directory is in a Git repository.
         if [ "$(git rev-parse --is-inside-work-tree &>/dev/null; echo "${?}")" == '0' ]; then
 
-            branchName="$(get_git_branch)"
+            branch_name="$(get_git_branch)"
 
             # check if the current directory is in .git before running git checks
             if [ "$(git rev-parse --is-inside-git-dir 2> /dev/null)" == 'false' ]; then
@@ -140,7 +143,7 @@ prompt() {
 
                 echo -e " $(get_git_status)";
             else
-                echo -e " $reset$branchName$reset";
+                echo -e " $reset$branch_name$reset";
             fi;
 
         else
@@ -148,22 +151,22 @@ prompt() {
         fi;
     }
 
-    PS1="$tabstyle";
+    PS1="$(set_tab_name)";
 
 
-    PS1+="$reset$userStyle\\u"
+    PS1+="$reset$user_color\\u"
     PS1+="$reset$dim$white:"
-    PS1+="$reset$hostStyle\\h";
+    PS1+="$reset$host_tyle\\h";
 
     PS1+="$reset$dim$white in "
-    PS1+="$reset$white$workingDir";
+    PS1+="$reset$white\\w";
 
     PS1+="$(prompt_git)"; # Git repository details
 
     PS1+="$reset"
 
 
-    PS1="$PS1\\n$exitColor$PS_SYMBOL$reset "
+    PS1="$PS1\\n$reset$exit_color$prompt_symbol$reset "
 
     # Update bash_history
     history -a
@@ -173,6 +176,12 @@ prompt() {
     export PS1;
 }
 
-PROMPT_COMMAND="prompt${PROMPT_COMMAND:+; $PROMPT_COMMAND}"
+if [ "$SHLVL" -eq 1 ]; then
+  PROMPT_COMMAND="prompt ${PROMPT_COMMAND:+; $PROMPT_COMMAND}"
+  PROMPT_COMMAND=$(awk -F\; '{for(i=1;i<=NF;i++){if(!($i in a)){a[$i];printf s$i;s=";"}}}'<<<"$PROMPT_COMMAND")
+else
+  PROMPT_COMMAND="prompt"
+fi
 
-export PROMPT_COMMAND=$(awk -F\;\  '{for(i=1;i<=NF;i++){if(!($i in a)){a[$i];printf s$i;s=";"}}}'<<<$PROMPT_COMMAND)
+export PROMPT_COMMAND
+

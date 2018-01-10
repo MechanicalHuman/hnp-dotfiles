@@ -7,8 +7,8 @@
 #
 
 export PS_SYMBOL='λ'
-export PS2="❯"
-export PS3="[?]"
+export PS2="❯ "
+export PS3="[?] "
 export EDITOR="nano"
 export HISTIGNORE='history:ls:ls *:date:w:man *:reload'
 export HISTCONTROL='ignoreboth:erasedups'
@@ -18,15 +18,15 @@ export LANG='en_US.UTF-8';
 export LC_ALL='en_US.UTF-8';
 export CLICOLOR=1
 export LSCOLORS=gxfxcxdxbxxxxxxxxxexex
-export LESS_TERMCAP_md="${yellow}";
+export LESS_TERMCAP_md='\[\e[33m\]';
 export PROMPT_DIRTRIM=2
 export LINES=128
 export NPM_CONFIG_PREFIX=$HOME/.config/npm/global
 export NPM_CONFIG_CACHE=$HOME/.config/npm/.cache
 
 PATH="$NPM_CONFIG_PREFIX/bin:$PATH"
-
-export PATH=$(awk -F: '{for(i=1;i<=NF;i++){if(!($i in a)){a[$i];printf s$i;s=":"}}}'<<<$PATH )
+PATH=$(awk -F: '{for(i=1;i<=NF;i++){if(!($i in a)){a[$i];printf s$i;s=":"}}}'<<<$PATH )
+export PATH
 
 
 

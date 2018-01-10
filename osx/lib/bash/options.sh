@@ -13,6 +13,6 @@ shopt -s histappend;
 shopt -s cdspell;
 
 # * Recursive globbing, e.g. `echo **/*.txt`
-for option in autocd globstar; do
-    shopt -s "$option" 2> /dev/null;
-done;
+shopt -s globstar 2> /dev/null;
+
+shopt -s autocd 2> /dev/null;
