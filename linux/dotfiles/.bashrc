@@ -6,7 +6,6 @@
 # Enviroment
 #
 
-export PS_SYMBOL='λ'
 export PS2="❯ "
 export PS3="[?] "
 export EDITOR="nano"
@@ -27,8 +26,6 @@ export NPM_CONFIG_CACHE=$HOME/.config/npm/.cache
 PATH="$NPM_CONFIG_PREFIX/bin:$PATH"
 PATH=$(awk -F: '{for(i=1;i<=NF;i++){if(!($i in a)){a[$i];printf s$i;s=":"}}}'<<<$PATH )
 export PATH
-
-
 
 
 #

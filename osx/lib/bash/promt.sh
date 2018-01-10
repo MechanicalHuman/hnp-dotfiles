@@ -30,7 +30,7 @@ prompt() {
     if [ ! "$SHLVL" -eq 1 ]; then
       prompt_symbol='❯'
     fi
-# \s-\v\$
+
     # Highlight the hostname when connected via SSH.
     if [ -n "$SSH_TTY" ]; then
       host_tyle="$bold$green"

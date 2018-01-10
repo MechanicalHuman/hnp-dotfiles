@@ -156,6 +156,11 @@ function npm () {
       return $?;
     fi
 
+    if [ "$1" == "update" ]; then
+      $(which npm) "$@" --save
+      return $?;
+    fi
+
     if [ "$1" == "clean" ]; then
       rm -rf node_modules && $(which npm) install
       return $?;
@@ -225,5 +230,4 @@ function open_project(){
    npx leasot './**/*.{js,css,html,pug,scss,sh,less}' --ignore 'node_modules/**/*'
   fi
 }
-
 

@@ -55,19 +55,18 @@ function dotfiles () {
     rm -rf $HOME/.profile
 
     log 'add .inputrc'
-    curl -sL https://raw.githubusercontent.com/MechanicalHuman/dev-dotfiles/master/linux/.inputrc > .inputrc
+    curl -sL https://raw.githubusercontent.com/MechanicalHuman/dev-reproducible-env/master/linux/dotfiles/.inputrc > .inputrc
     log 'add .bashrc'
-    curl -sL https://raw.githubusercontent.com/MechanicalHuman/dev-dotfiles/master/linux/.bashrc > .bashrc
+    curl -sL https://raw.githubusercontent.com/MechanicalHuman/dev-reproducible-env/master/linux/dotfiles/.bashrc > .bashrc
     log 'add .bash_prompt'
-    curl -sL https://raw.githubusercontent.com/MechanicalHuman/dev-dotfiles/master/linux/.bash_prompt > .bash_prompt
+    curl -sL https://raw.githubusercontent.com/MechanicalHuman/dev-reproducible-env/master/linux/dotfiles/.bash_prompt > .bash_prompt
     log 'add .bash_profile'
-    curl -sL https://raw.githubusercontent.com/MechanicalHuman/dev-dotfiles/master/linux/.bash_profile > .bash_profile
+    curl -sL https://raw.githubusercontent.com/MechanicalHuman/dev-reproducible-env/master/linux/dotfiles/.bash_profile > .bash_profile
 
     log "Source the bashrc"
     source $HOME/.bash_profile
 
 }
-
 
 
 echo "---------------------------------"

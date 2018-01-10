@@ -25,6 +25,9 @@ export LC_ALL='en_US.UTF-8';
 export CLICOLOR=1
 export LSCOLORS=gxfxcxdxbxxxxxxxxxexex
 
+export MANPAGER='ul'
+
+
 # PROMPT TRIM
 export PROMPT_DIRTRIM=2
 
@@ -34,3 +37,5 @@ export LINES=128
 PATH="/usr/local/sbin:$HOME/bin:$PATH"
 # CLEAN PATH
 export PATH=$(awk -F: '{for(i=1;i<=NF;i++){if(!($i in a)){a[$i];printf s$i;s=":"}}}'<<<$PATH )
+
+

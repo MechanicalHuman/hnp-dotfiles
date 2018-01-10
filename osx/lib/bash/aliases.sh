@@ -48,3 +48,4 @@ alias cclear="printf '\\33c\\e[3J'"
 # For example, to list all directories that contain a certain file:
 # find . -name .gitattributes | map dirname
 alias map="xargs -n1"
+
