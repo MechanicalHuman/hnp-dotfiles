@@ -2,53 +2,53 @@
 
 function prompt() {
 
-    local wd='\w'
+    local EXIT="$?"
 
-    local tabstyle="\[\033]0;\w\007"
+    local PS_SYMBOL='λ'
 
-    local reset="\[\e[0m\]"
-    local bold="\[\e[1m\]";
-    local dim="\[\e[2m\]";
-    local black="\[\e[30m\]";
-    local red="\[\e[31m\]";
-    local green="\[\e[32m\]";
-    local yellow="\[\e[33m\]";
-    local blue="\[\e[34m\]";
-    local magenta="\[\e[35m\]";
-    local cyan="\[\e[36m\]";
-    local white="\[\e[37m\]";
+    local reset='\[\e[0m\]'
+    local bold='\[\e[1m\]'
+    local dim='\[\e[2m\]'
+    local red='\[\e[31m\]'
+    local green='\[\e[32m\]'
+    local yellow='\[\e[33m\]'
+    local cyan='\[\e[36m\]'
+    local white='\[\e[37m\]'
 
+    local tabstyle='\[\033]0;\w\007'
+    local userStyle="$yellow"
+    local hostStyle="$green"
+    local exitColor="$green"
+    local workingDir='\w'
 
-    if [ $? -eq 0 ]; then
-        exitColor="$green"
-    else
-        exitColor="$red"
+    if [ ! "$SHLVL" -eq 1 ]; then
+      PS_SYMBOL='❯'
+    fi
+
+    # Highlight the hostname when connected via SSH.
+    if [ -n "$SSH_TTY" ]; then
+      hostStyle="$bold$green"
     fi
 
     # Highlight the user name when logged in as root.
-    if [[ "${USER}" == "root" ]]; then
-        userStyle="$bold$red";
-    else
-        userStyle="$yellow";
-    fi;
+    if [ "$EUID" -eq 0 ]; then userStyle="$bold$red"; fi
 
-    # Highlight the hostname when connected via SSH.
-    if [[ "${SSH_TTY}" ]]; then
-        hostStyle="$bold$green";
-    else
-        hostStyle="$green";
-    fi;
+    # Set the lambda as red if last comand exited with non 0
+    if [ $EXIT != 0 ]; then exitColor="$red"; fi
 
-    function strip {
-        local STRING=${1#$"$2"}
-        echo ${STRING%$"$2"}
-    }
 
-    function prompt_git() {
+    # If a package.json on the WD, use the package name as the WD
+    if [ -f ./package.json ]; then
+        workingDir=$( jq '.name' < ./package.json | sed -e 's/\"//g' )
+    fi
+
+
+
+    prompt_git() {
         branchName=""
 
         get_git_branch() {
-            echo "$(git symbolic-ref --quiet --short HEAD 2> /dev/null || git rev-parse --short HEAD 2> /dev/null || echo '(unknown)')";
+          git symbolic-ref --quiet --short HEAD 2> /dev/null || git rev-parse --short HEAD 2> /dev/null || echo '(unknown)'
         }
 
         is_branch1_behind_branch2 () {
@@ -125,7 +125,7 @@ function prompt() {
         }
 
         # Check if the current directory is in a Git repository.
-        if [ $(git rev-parse --is-inside-work-tree &>/dev/null; echo "${?}") == '0' ]; then
+        if [ "$(git rev-parse --is-inside-work-tree &>/dev/null; echo "${?}")" == '0' ]; then
 
             branchName="$(get_git_branch)"
 
@@ -148,17 +148,60 @@ function prompt() {
         fi;
     }
 
-    if [ -z "${debian_chroot:-}" ] && [ -r /etc/debian_chroot ]; then
-        debian_chroot=$(cat /etc/debian_chroot)
+   update_terminal_cwd() {
+    # Identify the directory using a "file:" scheme URL, including
+    # the host name to disambiguate local vs. remote paths.
+
+    # Percent-encode the pathname.
+    local url_path=''
+    {
+        # Use LC_CTYPE=C to process text byte-by-byte. Ensure that
+        # LC_ALL isn't set, so it doesn't interfere.
+        local i ch hexch LC_CTYPE=C LC_ALL=
+        for ((i = 0; i < ${#PWD}; ++i)); do
+      ch="${PWD:i:1}"
+      if [[ "$ch" =~ [/._~A-Za-z0-9-] ]]; then
+          url_path+="$ch"
+      else
+          printf -v hexch "%02X" "'$ch"
+          # printf treats values greater than 127 as
+          # negative and pads with "FF", so truncate.
+          url_path+="%${hexch: -2:2}"
+      fi
+        done
+    }
+
+    printf '\e]7;%s\a' "file://$HOSTNAME$url_path"
+  }
+
+
+    PS1="$tabstyle";
+
+
+    PS1+="$reset$userStyle\\u"
+    PS1+="$reset$dim$white:"
+    PS1+="$reset$hostStyle\\h";
+
+    PS1+="$reset$dim$white in "
+    PS1+="$reset$white$workingDir";
+
+    PS1+="$(prompt_git)"; # Git repository details
+
+    PS1+="$reset"
+
+
+    PS1="$PS1\\n$exitColor$PS_SYMBOL$reset "
+
+    if [ "$TERM_PROGRAM" == "Apple_Terminal" ]; then
+      update_terminal_cwd
     fi
 
+    # Update bash_history
     history -a
     history -c
     history -r
 
-    export COLUMNS=${COLUMNS}
-    export PS1="$tabstyle$reset${debian_chroot:+($debian_chroot)}$userStyle\u$reset$dim$white:$reset$hostStyle\h$reset$dim$white in $reset$white$wd$(prompt_git)$reset\n$exitColor$PS_SYMBOL$reset "
-
+    export PS1;
 }
 
 export PROMPT_COMMAND=prompt

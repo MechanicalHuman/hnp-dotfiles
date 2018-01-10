@@ -1,6 +1,6 @@
 #!/bin/bash
 
-function prompt() {
+prompt() {
 
     local EXIT="$?"
 
@@ -31,7 +31,7 @@ function prompt() {
     fi
 
     # Highlight the user name when logged in as root.
-    if [ "$EUID" -eq 0 ]; then userStyle="$bold$red"; fi
+    if [ "$EUID" -eq 0 ]; then userStyle="$bold$red\\a"; fi
 
     # Set the lambda as red if last comand exited with non 0
     if [ $EXIT != 0 ]; then exitColor="$red"; fi
@@ -148,33 +148,6 @@ function prompt() {
         fi;
     }
 
-   update_terminal_cwd() {
-    # Identify the directory using a "file:" scheme URL, including
-    # the host name to disambiguate local vs. remote paths.
-
-    # Percent-encode the pathname.
-    local url_path=''
-    {
-        # Use LC_CTYPE=C to process text byte-by-byte. Ensure that
-        # LC_ALL isn't set, so it doesn't interfere.
-        local i ch hexch LC_CTYPE=C LC_ALL=
-        for ((i = 0; i < ${#PWD}; ++i)); do
-      ch="${PWD:i:1}"
-      if [[ "$ch" =~ [/._~A-Za-z0-9-] ]]; then
-          url_path+="$ch"
-      else
-          printf -v hexch "%02X" "'$ch"
-          # printf treats values greater than 127 as
-          # negative and pads with "FF", so truncate.
-          url_path+="%${hexch: -2:2}"
-      fi
-        done
-    }
-
-    printf '\e]7;%s\a' "file://$HOSTNAME$url_path"
-  }
-
-
     PS1="$tabstyle";
 
 
@@ -192,10 +165,6 @@ function prompt() {
 
     PS1="$PS1\\n$exitColor$PS_SYMBOL$reset "
 
-    if [ "$TERM_PROGRAM" == "Apple_Terminal" ]; then
-      update_terminal_cwd
-    fi
-
     # Update bash_history
     history -a
     history -c
@@ -204,4 +173,6 @@ function prompt() {
     export PS1;
 }
 
-export PROMPT_COMMAND=prompt
+PROMPT_COMMAND="prompt${PROMPT_COMMAND:+; $PROMPT_COMMAND}"
+
+export PROMPT_COMMAND=$(awk -F\;\  '{for(i=1;i<=NF;i++){if(!($i in a)){a[$i];printf s$i;s=";"}}}'<<<$PROMPT_COMMAND)
