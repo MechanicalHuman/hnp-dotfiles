@@ -35,7 +35,10 @@ export LINES=128
 
 # Extend PATH
 PATH="/usr/local/sbin:$HOME/bin:$PATH"
+
 # CLEAN PATH
-export PATH=$(awk -F: '{for(i=1;i<=NF;i++){if(!($i in a)){a[$i];printf s$i;s=":"}}}'<<<$PATH )
+PATH=$(awk -F: '{for(i=1;i<=NF;i++){if(!($i in a)){a[$i];printf s$i;s=":"}}}'<<<"$PATH" )
+export PATH
+
 
 

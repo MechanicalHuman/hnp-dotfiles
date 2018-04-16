@@ -15,7 +15,10 @@ fi
 # ----------------------------------------------------------------------
 
 launchctl setenv PATH "$PATH"
-
+launchctl setenv NAME "$NAME"
+launchctl setenv EMAIL "$EMAIL"
+launchctl setenv HOMEPAGE "$HOMEPAGE"
+launchctl setenv NPM_TOKEN "$NPM_TOKEN"
 # gitconfig
 # ----------------------------------------------------------------------
 
@@ -24,3 +27,23 @@ cp -f "$HOME/.config/dotfiles/git/.gitconfig" "$HOME/.gitconfig"
 
 git config --global user.name "$NAME"
 git config --global user.email "$EMAIL"
+
+
+cat > "$HOME/Library/Application Support/com.fournova.Tower2/environment.plist" <<EOF
+    <?xml version="1.0" encoding="UTF-8"?>
+    <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+    <plist version="1.0">
+      <dict>
+        <key>PATH</key>
+        <string>"$PATH"</string>
+        <key>NAME</key>
+        <string>"$NAME"</string>
+        <key>EMAIL</key>
+        <string>"$EMAIL"</string>
+        <key>HOMEPAGE</key>
+        <string>"$HOMEPAGE"</string>
+        <key>NPM_TOKEN</key>
+        <string>"$NPM_TOKEN"</string>
+      </dict>
+    </plist>
+EOF

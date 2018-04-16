@@ -1,7 +1,7 @@
 #!/bin/bash
 
 function log () {
-  echo "  ○ $@"
+  echo "  ○ $1"
 }
 
 

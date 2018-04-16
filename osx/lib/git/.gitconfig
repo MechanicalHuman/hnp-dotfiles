@@ -1,68 +1,174 @@
 [core]
-    excludesfile = ~/.gitignore
-    attributesfile = ~/.gitattributes
-    whitespace = space-before-tab,-indent-with-non-tab,trailing-space
-    trustctime = false
-    precomposeunicode = false
-    editor = subl -n -w
-
-[color]
-    ui = auto
-    interactive = auto
+  excludesfile = ~/.gitignore
+  attributesfile = ~/.gitattributes
+  whitespace = space-before-tab,-indent-with-non-tab,trailing-space
+  trustctime = false
+  precomposeunicode = false
+  editor = nano
 
 [credential]
-    helper = osxkeychain
+  helper = osxkeychain
 
-[help]
-    autocorrect = 1
+[rerere]
+  enabled = 1
+  autoupdate = 1
+
+[remote "origin"]
+  prune = true
 
 [pull]
-    rebase = true
+  rebase = true
 
 [push]
-    default = matching
-    followTags = true
+  default = current
+  followTags = true
 
 [merge]
-    log = true
-
-[gitflow "prefix"]
-    feature = feature-
-    release = release-
-    hotfix = hotfix-
-    support = support-
-    versiontag = v
-
-[filter "lfs"]
-    required = true
-    clean = git-lfs clean -- %f
-    smudge = git-lfs smudge -- %f
-    process = git-lfs filter-process
+  log = true
+  conflictstyle = diff3
 
 [advice]
   statusHints = false
 
+[help]
+  autocorrect = 1
+
 [log]
   abbrevCommit = true
 
-[pretty]
-    # tut: http://gitimmersion.com/lab_10.html
-    # ref: http://linux.die.net/man/1/git-log
-    # Result: <short-sha> <commit-message> (<pointer-names>) -- <commit-author-name>; <relative-time>
-    nice = "%C(yellow)%h%C(reset) %C(white)%s%C(cyan)%d%C(reset) -- %an; %ar"
+[diff]
+  compactionHeuristic = true
+  indentHeuristic = true
+  algorithm = patience
+
+[blame]
+  date = relative
+
+###############
+##### UI ######
+###############
+
+[color]
+  ui = auto
+  interactive = auto
+
+[color "branch"]
+  current = yellow reverse
+  local = yellow
+  remote = green
+
+[color "diff"]
+  meta = yellow bold
+  frag = magenta bold
+  old = red bold
+  new = green bold
+
+[color "status"]
+  added = yellow
+  changed = green
+  untracked = cyan
+
+[format]
+  pretty = "%Cred%h%Creset -%C(yellow)%d%Creset %C(white)%s%Creset %an - %ar"
+
+####################
+##### ALIASES ######
+####################
+
+[alias]
+  # Go to last branch
+  back = checkout "-"
+  # GIT-FLOW log
+  graph = log --graph
+  # GIT-FLOW log but just last 10 commits
+  history = log --graph -10
+  # Discard local changes
+  discard = reset --hard HEAD
+  # Discard local changes AND cleanup
+  nvm = !git reset --hard HEAD && git clean -d -f
+  # Delete last commit
+  undo = reset --mixed HEAD~
+  # Fix Last Commit message
+  resave = commit --amend
+  # Quick Commit
+  save = "!f() { \
+            local message='Quick commit'; \
+            if [ $# -ne 0 ]; then message=${*}; fi; \
+            message=\"$message [$(hostname -s)]\"; \
+            git status -u -s; \
+            echo \"$(tput bold)$(tput setaf 3)> About to add all changes to the staging area$(tput sgr0)\"; \
+            git add .; \
+            echo \"$(tput dim)> Commit message: $(tput sgr0)$(tput bold)$message$(tput sgr0)\";\
+            git commit -m \"$message\";\
+          }; f"
+  # COMMIT AND PUSH
+  step = "!f() { \
+            local message='Quick commit'; \
+            if [ $# -ne 0 ]; then message=${*}; fi; \
+            message=\"$message [$(hostname -s)]\"; \
+            git status -u -s; \
+            echo \"$(tput bold)$(tput setaf 3)> About to add all changes to the staging area$(tput sgr0)\"; \
+            git add .; \
+            echo \"$(tput dim)> Commit message: $(tput sgr0)$(tput bold)$message$(tput sgr0)\";\
+            git commit -m \"$message\";\
+            git push;\
+          }; f"
+
+#####################
+#### EXTENSIONS #####
+#####################
+
+# GITFLOW
+
+[gitflow "branch"]
+  master = master
+  develop = work
+
+[gitflow "prefix"]
+  feature = feature/
+  release = release/
+  hotfix = hotfix/
+  support = support/
+  versiontag = ''
+
+# LFS
+
+[filter "lfs"]
+  required = true
+  clean = git-lfs clean -- %f
+  smudge = git-lfs smudge -- %f
+  process = git-lfs filter-process
+
+# HAWSER
+
+[filter "hawser"]
+  clean = git hawser clean %f
+  smudge = git hawser smudge %f
+  required = true
+
+###############
+#### URLS #####
+###############
+
+# GITHUB
 
 [url "git@github.com:"]
-    insteadOf = "gh:"
-    pushInsteadOf = "github:"
-    pushInsteadOf = "git://github.com/"
+  insteadOf = "gh:"
+  pushInsteadOf = "github:"
+  pushInsteadOf = "git://github.com/"
 
 [url "git://github.com/"]
-    insteadOf = "github:"
+  insteadOf = "github:"
 
 [url "git@gist.github.com:"]
-    insteadOf = "gst:"
-    pushInsteadOf = "gist:"
-    pushInsteadOf = "git://gist.github.com/"
+  insteadOf = "gst:"
+  pushInsteadOf = "gist:"
+  pushInsteadOf = "git://gist.github.com/"
 
 [url "git://gist.github.com/"]
-    insteadOf = "gist:"
+  insteadOf = "gist:"
+
+###############
+#### SELF #####
+###############
+

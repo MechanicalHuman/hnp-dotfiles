@@ -41,7 +41,7 @@ prompt() {
     if [ "$EUID" -eq 0 ]; then user_color="$bold$red"; fi
 
     # Set the lambda as red if last comand exited with non 0
-    if [ $EXIT != 0 ]; then exit_color="$red\\a"; fi
+    if [ $EXIT != 0 ]; then exit_color="$red"; fi
 
     set_tab_name() {
       printf '\e]1;%s\a' "$tab_name"
@@ -173,15 +173,14 @@ prompt() {
     history -c
     history -r
 
+    export COLUMNS=$(tput cols)
+    export LINES=$(tput lines)
     export PS1;
+
 }
 
-if [ "$SHLVL" -eq 1 ]; then
-  PROMPT_COMMAND="prompt ${PROMPT_COMMAND:+; $PROMPT_COMMAND}"
-  PROMPT_COMMAND=$(awk -F\; '{for(i=1;i<=NF;i++){if(!($i in a)){a[$i];printf s$i;s=";"}}}'<<<"$PROMPT_COMMAND")
-else
-  PROMPT_COMMAND="prompt"
-fi
+PROMPT_COMMAND="prompt${PROMPT_COMMAND:+; $PROMPT_COMMAND}"
+PROMPT_COMMAND=$(awk -F\; '{for(i=1;i<=NF;i++){if(!($i in a)){a[$i];printf s$i;s=";"}}}'<<<"$PROMPT_COMMAND")
 
 export PROMPT_COMMAND
 

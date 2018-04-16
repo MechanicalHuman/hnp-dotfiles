@@ -93,57 +93,6 @@ function git-nuke () {
   fi
 }
 
-# Quick git commit + push
-function git-step () {
-
-  local message
-
-  if [ -n "$1" ]; then
-    message="$1 [$(hostname -s)]"
-    shift
-  else
-    message="Quick update from [$(hostname -s)]"
-  fi
-
-  if [ "$1" == "--all" ]; then
-
-    local BRANCH
-    BRANCH=$(git rev-parse --abbrev-ref HEAD)
-
-    chalk bold red "About to add all untracked files to the working tree"
-
-    chalk dim "> git status"
-    git status
-    echo ""
-
-    read -rp "To continue please type the name of current branch." USER_BRANCH
-
-    if [[ $USER_BRANCH == "$BRANCH" ]]; then
-      git rm . -r --cached
-    else
-      chalk dim "> Aborting"
-      exit
-    fi
-  fi
-
-  chalk dim "> ${message}"
-
-  git add .
-  git commit -m "$message"
-  git push
-
-}
-
-# Override GIT to add "step" as a command
-function git () {
-  if [ "$1" == "step" ]; then
-      shift
-      git-step "$@"
-  else
-    $(which git) "$@"
-  fi
-}
-
 
 # Expand NPM command with helpers
 
@@ -166,12 +115,6 @@ function npm () {
       return $?;
     fi
 
-    if [ "$1" == "dev" ]; then
-        if [ "$( jq '.scripts | has("dev")' < ./package.json )" == "true" ]; then
-            $(which npm) run "$@"
-            return $?;
-        fi
-    fi
   fi
 
   $(which npm) "$@"
@@ -188,7 +131,7 @@ function pm2 () {
   $(which pm2) "$@"
 }
 
-function set_project() {
+function set-project() {
   local DEST=$PWD
   if [ -z "$1" ]; then
     chalk red "You need to pass the shorcut to the project in dot notation"
@@ -203,6 +146,8 @@ function set_project() {
   fi
 
   echo "alias p.$1='open_project $DEST'" >> ~/.projects
+  # shellcheck source=/dev/null
+  source ~/.projects
   chalk green "Added p.$1 as a shorcut to $DEST"
 }
 
@@ -227,7 +172,9 @@ function open_project(){
   fi
 
   if [ $_hasp -eq 0 ]; then
-   npx leasot './**/*.{js,css,html,pug,scss,sh,less}' --ignore 'node_modules/**/*'
+   npx leasot './**/**' --skip-unsupported --ignore './node_modules/**/**'
   fi
 }
+
+
 

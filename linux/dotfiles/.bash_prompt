@@ -41,7 +41,7 @@ prompt() {
     if [ "$EUID" -eq 0 ]; then user_color="$bold$red"; fi
 
     # Set the lambda as red if last comand exited with non 0
-    if [ $EXIT != 0 ]; then exit_color="$red\\a"; fi
+    if [ $EXIT != 0 ]; then exit_color="$red"; fi
 
     set_tab_name() {
       printf '\e]1;%s\a' "$tab_name"

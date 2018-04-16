@@ -210,7 +210,7 @@ function configure_npm(){
 
 function configure_pm2(){
   log info "Configuring: PM2"
-  sudo $(which pm2) startup launchd -u "$USER" --hp "$HOME"
+  sudo "$(which pm2)" startup launchd -u "$USER" --hp "$HOME"
   $(which pm2) install pm2-logrotate
   log success "Succesfully configured PM2"
 }
@@ -241,7 +241,7 @@ function configure_osx(){
   defaults write -g AppleShowScrollBars -string "WhenScrolling"
 
   log debug "Enable AirDrop over Ethernet and on unsupported Macs running Lion"
-  defaults write com.apple.NetworkBrowser BrowseAllInterfaces -bool true
+  defaults write com.apple.NetworkBrowser BrowseAllInterfaces -bool false
 
   log debug "Correct spelling automatically"
   defaults write NSGlobalDomain NSAutomaticSpellingCorrectionEnabled -bool true

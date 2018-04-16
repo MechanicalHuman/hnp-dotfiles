@@ -35,9 +35,6 @@ alias dns-cache="sudo killall -HUP mDNSResponder;sudo killall mDNSResponderHelpe
 alias show="defaults write com.apple.finder AppleShowAllFiles -bool true && killall Finder"
 alias hide="defaults write com.apple.finder AppleShowAllFiles -bool false && killall Finder"
 
-# Lock the screen (when going AFK)
-alias afk="/System/Library/CoreServices/Menu Extras/User.menu/Contents/Resources/CGSession -suspend"
-
 # Reload the shell (i.e. invoke as a login shell)
 alias reload='exec $SHELL -l'
 

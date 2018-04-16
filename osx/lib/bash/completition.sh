@@ -14,3 +14,5 @@ fi
 
 # Add `killall` tab completion for common apps
 complete -o "nospace" -W "Contacts Calendar Dock Finder Mail Safari iTunes SystemUIServer Terminal Twitter node" killall;
+
+complete -o "nospace" -W "--no-time-stamps --stamp-format --time-zone --level --depth --max-array-length --strict" pretty;
