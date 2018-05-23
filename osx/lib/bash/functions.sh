@@ -25,7 +25,7 @@ function dataurl() {
   echo "data:${mimeType};base64,$(openssl base64 -in "$1" | tr -d '\n')";
 }
 
-# [edit] with no arguments opens the current directory in Sublime Text, otherwise opens the given location
+# # [edit] with no arguments opens the current directory in Sublime Text, otherwise opens the given location
 function edit() {
   if which subl >/dev/null; then
       local sublime
@@ -47,6 +47,31 @@ function edit() {
     fi
   fi
 }
+
+
+# [edit] with no arguments opens the current directory in vsCode, otherwise opens the given location
+# function edit() {
+#   if which code >/dev/null; then
+#     local vscode
+#     vscode=$(which code)
+#     if [ $# -eq 0 ]; then
+#         local _hasp=0
+#         for project in *.code-workspace; do
+#             if [ -f "$project" ]; then
+#                 echo "$project"
+#                 $vscode "$project"
+#                 _hasp=1
+#             fi
+#         done
+#         if [ $_hasp -eq 0 ]; then
+#             $vscode .
+#         fi
+#     else
+#       $vscode "$@"
+#     fi
+#   fi
+# }
+
 
 # `open` with no arguments opens the current directory, otherwise opens the given location
 function open () {
@@ -172,7 +197,7 @@ function open_project(){
   fi
 
   if [ $_hasp -eq 0 ]; then
-   npx leasot './**/**' --skip-unsupported --ignore './node_modules/**/**'
+   npx leasot './**/**' --skip-unsupported --ignore './node_modules/**/**' --exit-nicely
   fi
 }
 

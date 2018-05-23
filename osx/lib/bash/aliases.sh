@@ -46,3 +46,4 @@ alias cclear="printf '\\33c\\e[3J'"
 # find . -name .gitattributes | map dirname
 alias map="xargs -n1"
 
+alias bfg="java -jar ~/Applications/bfg.jar "

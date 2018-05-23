@@ -4,7 +4,7 @@
   whitespace = space-before-tab,-indent-with-non-tab,trailing-space
   trustctime = false
   precomposeunicode = false
-  editor = nano
+  editor = subl --wait
 
 [credential]
   helper = osxkeychain
@@ -114,6 +114,7 @@
             git push;\
           }; f"
 
+
 #####################
 #### EXTENSIONS #####
 #####################
@@ -122,14 +123,14 @@
 
 [gitflow "branch"]
   master = master
-  develop = work
+  develop = develop
 
 [gitflow "prefix"]
   feature = feature/
   release = release/
   hotfix = hotfix/
   support = support/
-  versiontag = ''
+
 
 # LFS
 

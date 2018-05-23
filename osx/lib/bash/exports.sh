@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Editors
-export VISUAL='subl'
+export VISUAL='code'
 export EDITOR="nano"
 export PREVIEW="/Applications/Preview.app"
 
