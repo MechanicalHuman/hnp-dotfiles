@@ -19,6 +19,8 @@ launchctl setenv NAME "$NAME"
 launchctl setenv EMAIL "$EMAIL"
 launchctl setenv HOMEPAGE "$HOMEPAGE"
 launchctl setenv NPM_TOKEN "$NPM_TOKEN"
+launchctl setenv NPM_SCOPE "$NPM_SCOPE"
+launchctl setenv VISUAL "$VISUAL"
 # gitconfig
 # ----------------------------------------------------------------------
 
@@ -44,6 +46,10 @@ cat > "$HOME/Library/Application Support/com.fournova.Tower2/environment.plist" 
         <string>"$HOMEPAGE"</string>
         <key>NPM_TOKEN</key>
         <string>"$NPM_TOKEN"</string>
+        <key>NPM_SCOPE</key>
+        <string>"$NPM_SCOPE"</string>
+        <key>VISUAL</key>
+        <string>"$VISUAL"</string>
       </dict>
     </plist>
 EOF

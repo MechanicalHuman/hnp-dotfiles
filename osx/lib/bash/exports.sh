@@ -25,8 +25,6 @@ export LC_ALL='en_US.UTF-8';
 export CLICOLOR=1
 export LSCOLORS=gxfxcxdxbxxxxxxxxxexex
 
-export MANPAGER='ul'
-
 
 # PROMPT TRIM
 export PROMPT_DIRTRIM=2
