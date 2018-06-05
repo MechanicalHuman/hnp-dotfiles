@@ -1,8 +1,10 @@
 # Make Tab autocomplete regardless of filename case
 set completion-ignore-case on
+set completion-map-case on
 
 # List all matches in case multiple possible completions are possible
 set show-all-if-ambiguous on
+set show-all-if-unmodified off
 
 # Immediately add a trailing slash when autocompleting symlinks to directories
 set mark-symlinked-directories on
@@ -23,6 +25,7 @@ set completion-query-items 200
 
 # Show extra file information when completing, like `ls -F` does
 set visible-stats on
+set colored-stats on
 
 # Be more intelligent when autocompleting by also looking at the text after
 # the cursor. For example, when the current line is "cd ~/src/mozil", and
@@ -34,13 +37,28 @@ set skip-completed-text on
 # Allow UTF-8 input and output, instead of showing stuff like $'\0123\0456'
 set input-meta on
 set output-meta on
-set convert-meta on
+
+# To allow the use of 8bit-characters like the german umlauts, comment
+# the line below. However this makes the meta key not work as a meta key,
+# which is annoying to those which don't need to type in 8-bit characters.
+set convert-meta off
 
 # Use Alt/Meta + Delete to delete the preceding word
-"\e[3;3~": kill-word
+"\e[3~": kill-word
 
-#Jump to the target folder of the last command and run ls with Option-x
-"\ex": 'cd !$ \015ls\015'
+# begin end
+"\e\e[D": beginning-of-line
+"\e\e[C": end-of-line
+
+# SHORCUTS
 
 #Undo a directory change with Option-z
 "\ez": 'cd -\015'
+
+# Clear the screen
+"\ek": 'printf "\\33c\\e[3J" \015'
+
+# Reload the shell (i.e. invoke as a login shell)
+"\er": 'exec $SHELL -l \015'
+
+

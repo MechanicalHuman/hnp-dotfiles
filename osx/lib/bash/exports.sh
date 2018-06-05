@@ -15,7 +15,7 @@ export HISTCONTROL='ignoredups:erasedups'
 
 # Increase Bash history size. Allow 32³ entries; the default is 500.
 export HISTSIZE='32768'
-export HISTSIZE=${HISTFILESIZE}
+export HISTFILESIZE="${HISTSIZE}";
 
 # Prefer US English and use UTF-8.
 export LANG='en_US.UTF-8';
@@ -25,11 +25,14 @@ export LC_ALL='en_US.UTF-8';
 export CLICOLOR=1
 export LSCOLORS=gxfxcxdxbxxxxxxxxxexex
 
-
 # PROMPT TRIM
 export PROMPT_DIRTRIM=2
 
 export LINES=128
+
+# Don’t clear the screen after quitting a manual page.
+export MANPAGER='less -X';
+
 
 # Extend PATH
 PATH="/usr/local/sbin:$HOME/bin:$PATH"

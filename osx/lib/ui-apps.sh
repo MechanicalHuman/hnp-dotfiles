@@ -15,7 +15,7 @@ fi
 # ----------------------------------------------------------------------
 
 launchctl setenv PATH "$PATH"
-launchctl setenv NAME "$NAME"
+launchctl setenv FULL_NAME "$FULL_NAME"
 launchctl setenv EMAIL "$EMAIL"
 launchctl setenv HOMEPAGE "$HOMEPAGE"
 launchctl setenv NPM_TOKEN "$NPM_TOKEN"
@@ -27,7 +27,7 @@ launchctl setenv VISUAL "$VISUAL"
 rm -f "$HOME/.gitconfig"
 cp -f "$HOME/.config/dotfiles/git/.gitconfig" "$HOME/.gitconfig"
 
-git config --global user.name "$NAME"
+git config --global user.name "$FULL_NAME"
 git config --global user.email "$EMAIL"
 
 
@@ -38,16 +38,22 @@ cat > "$HOME/Library/Application Support/com.fournova.Tower2/environment.plist" 
       <dict>
         <key>PATH</key>
         <string>"$PATH"</string>
-        <key>NAME</key>
-        <string>"$NAME"</string>
+
+        <key>FULL_NAME</key>
+        <string>"$FULL_NAME"</string>
+
         <key>EMAIL</key>
         <string>"$EMAIL"</string>
+
         <key>HOMEPAGE</key>
         <string>"$HOMEPAGE"</string>
+
         <key>NPM_TOKEN</key>
         <string>"$NPM_TOKEN"</string>
+
         <key>NPM_SCOPE</key>
         <string>"$NPM_SCOPE"</string>
+
         <key>VISUAL</key>
         <string>"$VISUAL"</string>
       </dict>

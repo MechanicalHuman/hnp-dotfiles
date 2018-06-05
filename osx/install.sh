@@ -82,22 +82,22 @@ function generateEnv(){
     source "$HOME/.env"
   fi
 
-  if [ -z "$NAME" ]; then
-    read -r -p "What's your name?" NAME
-    if [ -z "$NAME" ]; then NAME="$USER"; fi
-    echo "export NAME='$NAME'" >> "$HOME/.env"
+  if [ -z "$FULL_NAME" ]; then
+    read -r -p "What's your name?" FULL_NAME
+    if [ -z "$FULL_NAME" ]; then FULL_NAME="$USER"; fi
+    echo "export FULL_NAME='$FULL_NAME'" >> "$HOME/.env"
   fi
 
   if [ -z "$EMAIL" ]; then
     read -r -p "What's your email?" EMAIL
     if [ -z "$EMAIL" ]; then EMAIL="$USER@$(hostname -s)"; fi
-    echo "export NAME='$EMAIL'" >> "$HOME/env"
+    echo "export EMAIL='$EMAIL'" >> "$HOME/.env"
   fi
 
   if [ -z "$HOMEPAGE" ]; then
     read -r -p "What's your website?" HOMEPAGE
     if [ -z "$HOMEPAGE" ]; then HOMEPAGE="http://www.example.com"; fi
-    echo "export HOMEPAGE='$HOMEPAGE'" >> "$HOME/env"
+    echo "export HOMEPAGE='$HOMEPAGE'" >> "$HOME/.env"
   fi
 
 }
@@ -116,21 +116,27 @@ function install_homebrew(){
   log debug "Updating HomeBrew"
   brew update > /dev/null
   brew tap Homebrew/bundle
-  brew bundle --file --file="$LIBDIR/packages/Brewfile"
+  brew bundle --file="$LIBDIR/packages/Brewfile"
   brew bundle dump --force --global
+
+  log debug "Making Mongo a Home"
+  mkdir -p "$HOME/Databases/mong"
+
   log success "Succesfully installed Homebrew"
   INSTALLED_HOMEBREW=1
 }
 
 function update_bash(){
   log info "Configuring: Bash4 as the default shell"
-  if [ "$(grep -c /private/etc/shells /usr/local/bin/bash)" -eq 0 ]; then
+  if [ "$(grep -c /usr/local/bin/bash /private/etc/shells)" -eq 0 ]; then
     sudo bash -c 'echo -e /usr/local/bin/bash >> /private/etc/shells'
-    sudo chsh -s '/usr/local/bin/bash' 2> /dev/null
-    log success "Bash4 configured as default shell"
+    log debug "Bash4 added to your shells"
   else
     log warn "usr/local/bin/bash seems to exist already in your shell options"
   fi
+
+  sudo chsh -s '/usr/local/bin/bash' 2> /dev/null
+  log success "Bash4 configured as default shell"
 }
 
 function configure_dotfiles(){
@@ -175,6 +181,8 @@ function configure_dotfiles(){
       fi
   done
 
+
+
   # LaunchAgent
   log debug "Exposing: .env as a LaunchAgent"
   cat > "$HOME/Library/LaunchAgents/env-ui.plist" <<EOF
@@ -210,8 +218,12 @@ function configure_npm(){
 
 function configure_pm2(){
   log info "Configuring: PM2"
+  # Create the logs folder beforehand to avoid permision conflicts
+  mkdir -p "$HOME/.pm2/logs"
+
   sudo "$(which pm2)" startup launchd -u "$USER" --hp "$HOME"
   $(which pm2) install pm2-logrotate
+
   log success "Succesfully configured PM2"
 }
 
@@ -241,7 +253,7 @@ function configure_osx(){
   defaults write -g AppleShowScrollBars -string "WhenScrolling"
 
   log debug "Enable AirDrop over Ethernet and on unsupported Macs running Lion"
-  defaults write com.apple.NetworkBrowser BrowseAllInterfaces -bool false
+  defaults write com.apple.NetworkBrowser BrowseAllInterfaces -bool true
 
   log debug "Correct spelling automatically"
   defaults write NSGlobalDomain NSAutomaticSpellingCorrectionEnabled -bool true
@@ -301,6 +313,37 @@ function configure_osx(){
 
   log debug "Restart automatically if the computer freezes"
   sudo systemsetup -setrestartfreeze on
+
+
+  log debug "Expand save panel by default"
+  defaults write NSGlobalDomain NSNavPanelExpandedStateForSaveMode -bool true
+  defaults write NSGlobalDomain NSNavPanelExpandedStateForSaveMode2 -bool true
+
+  log debug "Expand print panel by default"
+  defaults write NSGlobalDomain PMPrintingExpandedStateForPrint -bool true
+  defaults write NSGlobalDomain PMPrintingExpandedStateForPrint2 -bool true
+
+  log debug "Disable the 'Are you sure you want to open this application?' dialog"
+  defaults write com.apple.LaunchServices LSQuarantine -bool false
+
+log debug "Check for software updates daily, not just once per week"
+defaults write com.apple.SoftwareUpdate ScheduleFrequency -int 1
+
+log info "SSD DRIVE BABY"
+log debug "Disable hibernation (speeds up entering sleep mode)"
+sudo pmset -a hibernatemode 0
+log debug "Remove the sleep image file to save disk space"
+sudo rm -f /private/var/vm/sleepimage
+log debug "Create a zero-byte file instead…"
+sudo touch /private/var/vm/sleepimage
+log debug "…and make sure it can’t be rewritten"
+sudo chflags uchg /private/var/vm/sleepimage
+log debug "Disable the sudden motion sensor as it’s not useful for SSDs"
+sudo pmset -a sms 0
+
+
+log debug "Enable subpixel font rendering on non-Apple LCDs"
+defaults write NSGlobalDomain AppleFontSmoothing -int 2
 
   log success "Succesfully configured MacOS"
 }

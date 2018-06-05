@@ -46,4 +46,11 @@ alias cclear="printf '\\33c\\e[3J'"
 # find . -name .gitattributes | map dirname
 alias map="xargs -n1"
 
-alias bfg="java -jar ~/Applications/bfg.jar "
+# Common places
+alias dl="cd ~/Downloads"
+alias dt="cd ~/Desktop"
+alias p="cd ~/Active"
+
+# Stuff I never really use but cannot delete either because of http://xkcd.com/530/
+alias stfu="osascript -e 'set volume output muted true'"
+alias pumpitup="osascript -e 'set volume 7'"
