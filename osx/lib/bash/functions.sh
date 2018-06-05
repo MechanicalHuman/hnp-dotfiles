@@ -26,51 +26,71 @@ function dataurl() {
 }
 
 # # [edit] with no arguments opens the current directory in Sublime Text, otherwise opens the given location
-function edit() {
-  if which subl >/dev/null; then
-      local sublime
-      sublime=$(which subl)
-      if [ $# -eq 0 ]; then
-        local _hasp=0
-        for project in *.sublime-project; do
-            if [ -f "$project" ]; then
-                echo "$project"
-                $sublime "$project"
-                _hasp=1
-            fi
-        done
-        if [ $_hasp -eq 0 ]; then
-            $sublime .
-        fi
-    else
-      $sublime "$@"
-    fi
-  fi
-}
-
-
-# [edit] with no arguments opens the current directory in vsCode, otherwise opens the given location
 # function edit() {
-#   if which code >/dev/null; then
-#     local vscode
-#     vscode=$(which code)
-#     if [ $# -eq 0 ]; then
+#   if which subl >/dev/null; then
+#       local sublime
+#       sublime=$(which subl)
+#       if [ $# -eq 0 ]; then
 #         local _hasp=0
-#         for project in *.code-workspace; do
+#         for project in *.sublime-project; do
 #             if [ -f "$project" ]; then
 #                 echo "$project"
-#                 $vscode "$project"
+#                 $sublime "$project"
 #                 _hasp=1
 #             fi
 #         done
 #         if [ $_hasp -eq 0 ]; then
-#             $vscode .
+#             $sublime .
 #         fi
 #     else
-#       $vscode "$@"
+#       $sublime "$@"
 #     fi
 #   fi
 # }
+
+extract () {
+    if [ -f $1 ] ; then
+      case $1 in
+        *.tar.bz2)   tar xjf $1     ;;
+        *.tar.gz)    tar xzf $1     ;;
+        *.bz2)       bunzip2 $1     ;;
+        *.rar)       unrar e $1     ;;
+        *.gz)        gunzip $1      ;;
+        *.tar)       tar xf $1      ;;
+        *.tbz2)      tar xjf $1     ;;
+        *.tgz)       tar xzf $1     ;;
+        *.zip)       unzip $1       ;;
+        *.Z)         uncompress $1  ;;
+        *.7z)        7z x $1        ;;
+        *)     echo "'$1' cannot be extracted via extract()" ;;
+         esac
+     else
+         echo "'$1' is not a valid file"
+     fi
+}
+
+# [edit] with no arguments opens the current directory in vsCode, otherwise opens the given location
+function edit() {
+  if which code >/dev/null; then
+    local vscode
+    vscode=$(which code)
+    if [ $# -eq 0 ]; then
+        local _hasp=0
+        for project in *.code-workspace; do
+            if [ -f "$project" ]; then
+                echo "$project"
+                $vscode "$project"
+                _hasp=1
+            fi
+        done
+        if [ $_hasp -eq 0 ]; then
+            $vscode .
+        fi
+    else
+      $vscode "$@"
+    fi
+  fi
+}
 
 
 # `open` with no arguments opens the current directory, otherwise opens the given location
