@@ -1,4 +1,3 @@
-@cactus-technologies/lab100
 @mechanicalhuman/bunyan-pretty
 browser-sync
 bunyan
@@ -14,7 +13,6 @@ npm
 pm2
 prettier
 pug-beautifier
-rtail
 sass-lint
 serve
 sort-package-json

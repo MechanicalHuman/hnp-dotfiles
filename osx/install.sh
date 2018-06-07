@@ -167,7 +167,7 @@ function configure_dotfiles(){
 
   rm -f "$HOME/.gitconfig"
   cp -f "$LIBDIR/git/.gitconfig" "$HOME/.gitconfig"
-  git config --global user.name "$NAME"
+  git config --global user.name "$FULL_NAME"
   git config --global user.email "$EMAIL"
 
   # Extras
@@ -206,7 +206,7 @@ EOF
   launchctl load "$HOME/Library/LaunchAgents/env-ui.plist" 2>/dev/null
   launchctl start env-ui 2>/dev/null
 
-  exec $SHELL -l
+  exec "$SHELL" -l
 
   log success "Succesfully configured .dotfiles"
 
