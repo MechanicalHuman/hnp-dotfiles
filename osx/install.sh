@@ -206,6 +206,8 @@ EOF
   launchctl load "$HOME/Library/LaunchAgents/env-ui.plist" 2>/dev/null
   launchctl start env-ui 2>/dev/null
 
+  exec $SHELL -l
+
   log success "Succesfully configured .dotfiles"
 
 }
@@ -326,24 +328,18 @@ function configure_osx(){
   log debug "Disable the 'Are you sure you want to open this application?' dialog"
   defaults write com.apple.LaunchServices LSQuarantine -bool false
 
-log debug "Check for software updates daily, not just once per week"
-defaults write com.apple.SoftwareUpdate ScheduleFrequency -int 1
+  log debug "Check for software updates daily, not just once per week"
+  defaults write com.apple.SoftwareUpdate ScheduleFrequency -int 1
 
-log info "SSD DRIVE BABY"
-log debug "Disable hibernation (speeds up entering sleep mode)"
-sudo pmset -a hibernatemode 0
-log debug "Remove the sleep image file to save disk space"
-sudo rm -f /private/var/vm/sleepimage
-log debug "Create a zero-byte file instead…"
-sudo touch /private/var/vm/sleepimage
-log debug "…and make sure it can’t be rewritten"
-sudo chflags uchg /private/var/vm/sleepimage
-log debug "Disable the sudden motion sensor as it’s not useful for SSDs"
-sudo pmset -a sms 0
+  log info "SSD DRIVE BABY"
+  log debug "Disable hibernation (speeds up entering sleep mode)"
+  sudo pmset -a hibernatemode 0
+  log debug "Disable the sudden motion sensor as it’s not useful for SSDs"
+  sudo pmset -a sms 0
 
 
-log debug "Enable subpixel font rendering on non-Apple LCDs"
-defaults write NSGlobalDomain AppleFontSmoothing -int 2
+  log debug "Enable subpixel font rendering on non-Apple LCDs"
+  defaults write NSGlobalDomain AppleFontSmoothing -int 2
 
   log success "Succesfully configured MacOS"
 }

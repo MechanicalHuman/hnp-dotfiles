@@ -1,8 +1,9 @@
 #!/bin/bash
 
 # Editors
-export VISUAL='code'
-export EDITOR="nano"
+export EDITOR='nano'
+export VISUAL="${EDITOR}"
+
 export PREVIEW="/Applications/Preview.app"
 
 # Prompts
@@ -15,7 +16,7 @@ export HISTCONTROL='ignoredups:erasedups'
 
 # Increase Bash history size. Allow 32³ entries; the default is 500.
 export HISTSIZE='32768'
-export HISTFILESIZE="${HISTSIZE}";
+export HISTFILESIZE="${HISTSIZE}"
 
 # Prefer US English and use UTF-8.
 export LANG='en_US.UTF-8';

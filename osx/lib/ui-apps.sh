@@ -31,7 +31,7 @@ git config --global user.name "$FULL_NAME"
 git config --global user.email "$EMAIL"
 
 
-cat > "$HOME/Library/Application Support/com.fournova.Tower2/environment.plist" <<EOF
+cat > "$HOME/Library/Application Support/com.fournova.Tower3/environment.plist" <<EOF
     <?xml version="1.0" encoding="UTF-8"?>
     <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
     <plist version="1.0">
