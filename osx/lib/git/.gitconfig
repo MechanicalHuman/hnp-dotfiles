@@ -90,28 +90,36 @@
   undo = reset --mixed HEAD~
   # Fix Last Commit message
   resave = commit --amend
-  # Quick Commit
-  save = "!f() { \
-            local message='Quick commit'; \
-            if [ $# -ne 0 ]; then message=${*}; fi; \
-            message=\"$message [$(hostname -s)]\"; \
-            git status -u -s; \
-            echo \"$(tput bold)$(tput setaf 3)> About to add all changes to the staging area$(tput sgr0)\"; \
-            git add .; \
-            echo \"$(tput dim)> Commit message: $(tput sgr0)$(tput bold)$message$(tput sgr0)\";\
-            git commit -m \"$message\";\
-          }; f"
+
   # COMMIT AND PUSH
   step = "!f() { \
             local message='Quick commit'; \
+            local yolo=0; \
+            if [ $# -ne 0 ] && [ "$1" == "--yolo" ]; then yolo=1; shift; fi; \
             if [ $# -ne 0 ]; then message=${*}; fi; \
             message=\"$message [$(hostname -s)]\"; \
             git status -u -s; \
             echo \"$(tput bold)$(tput setaf 3)> About to add all changes to the staging area$(tput sgr0)\"; \
             git add .; \
             echo \"$(tput dim)> Commit message: $(tput sgr0)$(tput bold)$message$(tput sgr0)\";\
-            git commit -m \"$message\";\
-            git push;\
+            if [ "$yolo" -eq 1 ]; then git commit -m \"$message\" --no-verify; fi; \
+            if [ "$yolo" -eq 0 ]; then git commit -m \"$message\"; fi; \
+            if [ "$yolo" -eq 1 ]; then git push --no-verify; fi; \
+            if [ "$yolo" -eq 0 ]; then git push; fi; \
+          }; f"
+
+  save = "!f() { \
+            local message='Quick commit'; \
+            local yolo=0; \
+            if [ $# -ne 0 ] && [ "$1" == "--yolo" ]; then yolo=1; shift; fi; \
+            if [ $# -ne 0 ]; then message=${*}; fi; \
+            message=\"$message [$(hostname -s)]\"; \
+            git status -u -s; \
+            echo \"$(tput bold)$(tput setaf 3)> About to add all changes to the staging area$(tput sgr0)\"; \
+            git add .; \
+            echo \"$(tput dim)> Commit message: $(tput sgr0)$(tput bold)$message$(tput sgr0)\";\
+            if [ "$yolo" -eq 1 ]; then git commit -m \"$message\" --no-verify; fi; \
+            if [ "$yolo" -eq 0 ]; then git commit -m \"$message\"; fi; \
           }; f"
 
 
@@ -140,13 +148,6 @@
   smudge = git-lfs smudge -- %f
   process = git-lfs filter-process
 
-# HAWSER
-
-[filter "hawser"]
-  clean = git hawser clean %f
-  smudge = git hawser smudge %f
-  required = true
-
 ###############
 #### URLS #####
 ###############
@@ -157,10 +158,13 @@
   insteadOf = "gh:"
   pushInsteadOf = "github:"
   pushInsteadOf = "git://github.com/"
+  pushInsteadOf = "https://github.com/"
 
 [url "git://github.com/"]
   insteadOf = "github:"
+  insteadOf = https://github.com/
 
+# GITHUB GIST FIX
 [url "git@gist.github.com:"]
   insteadOf = "gst:"
   pushInsteadOf = "gist:"
