@@ -85,9 +85,9 @@ function open () {
 function tower () {
   if which gittower >/dev/null; then
       if [ $# -eq 0 ]; then
-        $(which gittower) .
+        gittower .
       else
-        $(which gittower) "$@"
+        gittower "$@"
       fi
   fi
 }
@@ -125,17 +125,24 @@ function npm () {
   if [ -f ./package.json ]; then
 
     if [ "$1" == "explore" ]; then
+      chalk dim "override: npm $* $SHELL"
       $(which npm) "$@" "$SHELL"
       return $?;
     fi
 
     if [ "$1" == "update" ]; then
+       chalk dim "override: npm $* --save"
       $(which npm) "$@" --save
       return $?;
     fi
 
-    if [ "$1" == "clean" ]; then
-      rm -rf node_modules && $(which npm) install
+    if [ "$1" == "cleanup" ]; then
+      chalk dim 'removing node_modules';
+      rm -rf node_modules
+      chalk dim 'removing package-lock.json'
+      rm -rf package-lock.json
+      chalk dim 'installing from package.json'
+      npm install
       return $?;
     fi
 
@@ -161,6 +168,7 @@ function brew () {
 function pm2 () {
 
   if [ "$1" == "logs" ]; then
+    chalk dim "override: pm2 $* --raw"
     $(which pm2) "$@" --raw
     return $?;
   fi

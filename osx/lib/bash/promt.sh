@@ -4,7 +4,7 @@ prompt() {
 
     local EXIT="$?"
 
-    local prompt_symbol='🎈 '
+    local prompt_symbol='λ'
     local tab_name='\W'
 
     local reset='\[\e[0m\]'
@@ -28,7 +28,7 @@ prompt() {
     fi
 
     if [ ! "$SHLVL" -eq 1 ]; then
-      prompt_symbol='❯'
+      prompt_symbol="$ ❯"
     fi
 
     # Highlight the hostname when connected via SSH.
@@ -44,7 +44,12 @@ prompt() {
     if [ $EXIT != 0 ]; then exit_color="$red"; fi
 
     set_tab_name() {
-      printf '\e]1;%s\a' "$tab_name"
+      local isXterm=0
+      case $TERM in
+          xterm*) isXterm=1;;
+          *) isXterm=0
+      esac
+      if [ $isXterm -eq 1 ]; then printf '\e]1;%s\a' "$tab_name"; fi
     }
 
     prompt_git() {
@@ -173,14 +178,21 @@ prompt() {
     history -c
     history -r
 
+    # Update Columns and lines just in case
     export COLUMNS=$(tput cols)
     export LINES=$(tput lines)
     export PS1;
-
 }
 
-PROMPT_COMMAND="prompt${PROMPT_COMMAND:+; $PROMPT_COMMAND}"
+# If on a subshell do not inherit the PROMPT_COMMAND
+if [ ! "$SHLVL" -eq 1 ]; then
+    PROMPT_COMMAND="prompt"
+else
+    PROMPT_COMMAND="prompt; $PROMPT_COMMAND"
+fi
+
 PROMPT_COMMAND=$(awk -F\; '{for(i=1;i<=NF;i++){if(!($i in a)){a[$i];printf s$i;s=";"}}}'<<<"$PROMPT_COMMAND")
+
 
 export PROMPT_COMMAND
 

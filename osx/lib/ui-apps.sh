@@ -21,6 +21,7 @@ launchctl setenv HOMEPAGE "$HOMEPAGE"
 launchctl setenv NPM_TOKEN "$NPM_TOKEN"
 launchctl setenv NPM_SCOPE "$NPM_SCOPE"
 launchctl setenv VISUAL "$VISUAL"
+
 # gitconfig
 # ----------------------------------------------------------------------
 
