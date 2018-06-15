@@ -10,5 +10,3 @@ if [ -f ~/.projects ]; then
   source ~/.projects
 fi
 
-
-

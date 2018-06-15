@@ -26,7 +26,10 @@ alias ip-public="dig +short myip.opendns.com @resolver1.opendns.com"
 alias ip-local="ifconfig | grep -Eo 'inet (addr:)?([0-9]*\\.){3}[0-9]*' | grep -Eo '([0-9]*\\.){3}[0-9]*' | grep -v '127.0.0.1' | uniq"
 
 # Recursively delete `.DS_Store` files
-alias cleanup="find . -type f -name '*.DS_Store' -ls -delete"
+alias clean-ds="find . -type f -name '*.DS_Store' -ls -delete"
+
+# Recursively delete `node_modules` folders
+alias clean-node="find . -type d -name 'node_modules' -ls -delete"
 
 # Clear DNS cache
 alias dns-cache="sudo killall -HUP mDNSResponder;sudo killall mDNSResponderHelper;sudo dscacheutil -flushcache"
@@ -49,7 +52,6 @@ alias map="xargs -n1"
 # Common places
 alias dl="cd ~/Downloads"
 alias dt="cd ~/Desktop"
-alias p="cd ~/Active"
 
 # Stuff I never really use but cannot delete either because of http://xkcd.com/530/
 alias stfu="osascript -e 'set volume output muted true'"

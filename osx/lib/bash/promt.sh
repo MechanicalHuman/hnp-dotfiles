@@ -55,6 +55,7 @@ prompt() {
     prompt_git() {
         local branch_name=""
 
+
         get_git_branch() {
           git symbolic-ref --quiet --short HEAD 2> /dev/null || git rev-parse --short HEAD 2> /dev/null || echo '(unknown)'
         }
@@ -151,13 +152,14 @@ prompt() {
                 echo -e " $reset$branch_name$reset";
             fi;
 
+
         else
             return;
         fi;
     }
 
-    PS1="$(set_tab_name)";
 
+    PS1="$(set_tab_name)";
 
     PS1+="$reset$user_color\\u"
     PS1+="$reset$dim$white:"
@@ -172,6 +174,7 @@ prompt() {
 
 
     PS1="$PS1\\n$reset$exit_color$prompt_symbol$reset "
+
 
     # Update bash_history
     history -a

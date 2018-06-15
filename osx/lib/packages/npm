@@ -12,9 +12,7 @@ npm
 pm2
 prettier
 pug-beautifier
-sass-lint
 stylelint
 serve
-sort-package-json
 
 
