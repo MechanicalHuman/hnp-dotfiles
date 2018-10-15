@@ -124,14 +124,14 @@ function install_homebrew() {
 
 function update_bash() {
   log info "Configuring: Bash4 as the default shell"
-  if [ "$(grep -c /usr/local/bin/bash /private/etc/shells)" -eq 0 ]; then
-    sudo bash -c 'echo -e /usr/local/bin/bash >> /private/etc/shells'
+  if [ "$(grep -c /usr/local/bin/bash /etc/shells)" -eq 0 ]; then
+    echo "/usr/local/bin/bash" | sudo tee -a /etc/shells > /dev/null
     log debug "Bash4 added to your shells"
   else
     log warn "usr/local/bin/bash seems to exist already in your shell options"
   fi
 
-  sudo chsh -s '/usr/local/bin/bash' 2> /dev/null
+  sudo chsh -s '/usr/local/bin/bash' "$USER" 2> /dev/null
   log success "Bash4 configured as default shell"
 }
 
