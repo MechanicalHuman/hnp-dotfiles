@@ -115,8 +115,6 @@ function install_homebrew() {
   brew bundle --file="$LIBDIR/packages/Brewfile"
   brew bundle dump --force --global
 
-  log debug "Making Mongo a Home"
-  mkdir -p "$HOME/Databases/mong"
 
   log success "Succesfully installed Homebrew"
   INSTALLED_HOMEBREW=1
