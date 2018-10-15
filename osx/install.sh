@@ -3,15 +3,15 @@
 LIBDIR=$PWD/osx/lib
 INSTALLED_HOMEBREW=0
 
-function header(){
+function header() {
   local txt="🤖 $* 🤖"
   local reset='\033[0m'
   local green='\033[32m'
 
   function printline() {
-   num=$((${#txt} + 2))
-   v=$(printf "%-${num}s" "-")
-   echo -e "${v// /-}"
+    num=$((${#txt} + 2))
+    v=$(printf "%-${num}s" "-")
+    echo -e "${v// /-}"
   }
 
   echo -e "$green"
@@ -21,8 +21,7 @@ function header(){
   echo -e "$reset"
 }
 
-
-function log(){
+function log() {
 
   local reset='\033[0m'
   local red='\033[31m'
@@ -56,26 +55,24 @@ function log(){
 
 }
 
+function linkme() {
 
-function linkme(){
+  local SOURCE=$1
+  local DEST=$2
 
-    local SOURCE=$1
-    local DEST=$2
-
-    if [ -f "$SOURCE" ]; then
-        if [ -f "$DEST" ] && [ ! -L "$DEST" ]; then
-            chalk yellow "❕ Backing up $DEST as $DEST.bck"
-            mv "$DEST" "$DEST.bck"
-        fi
-        ln -sf "$SOURCE" "$DEST"
-        log trace "${1} -> $DEST"
-    else
-        log error "NOT FUND: $SOURCE"
+  if [ -f "$SOURCE" ]; then
+    if [ -f "$DEST" ] && [ ! -L "$DEST" ]; then
+      chalk yellow "❕ Backing up $DEST as $DEST.bck"
+      mv "$DEST" "$DEST.bck"
     fi
+    ln -sf "$SOURCE" "$DEST"
+    log trace "${1} -> $DEST"
+  else
+    log error "NOT FUND: $SOURCE"
+  fi
 }
 
-
-function generateEnv(){
+function generateEnv() {
   log info 'Generating Enviroment'
   if [ -f "$HOME/.env" ]; then
     # shellcheck source=/dev/null
@@ -102,14 +99,13 @@ function generateEnv(){
 
 }
 
-
-function install_homebrew(){
+function install_homebrew() {
   log info "Installing: Homebrew"
 
-  if which brew >/dev/null; then
-      log debug "Homebrew is already installed"
+  if command -v brew > /dev/null; then
+    log debug "Homebrew is already installed"
   else
-      /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+    /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
   fi
 
   # Update HomeBrew
@@ -126,7 +122,7 @@ function install_homebrew(){
   INSTALLED_HOMEBREW=1
 }
 
-function update_bash(){
+function update_bash() {
   log info "Configuring: Bash4 as the default shell"
   if [ "$(grep -c /usr/local/bin/bash /private/etc/shells)" -eq 0 ]; then
     sudo bash -c 'echo -e /usr/local/bin/bash >> /private/etc/shells'
@@ -139,7 +135,7 @@ function update_bash(){
   log success "Bash4 configured as default shell"
 }
 
-function configure_dotfiles(){
+function configure_dotfiles() {
   log info "Configuring: Dotfiles"
 
   local DOTPATH=$HOME/.config/dotfiles
@@ -172,20 +168,17 @@ function configure_dotfiles(){
 
   # Extras
   log debug "Configuring: Extras"
-  for dotfile in $LIBDIR/extras/.*
-    do
-      if [ -f "$dotfile" ]; then
-          local base
-          base=$(basename "$dotfile")
-          linkme "$dotfile" "$HOME/$base"
-      fi
+  for dotfile in "$LIBDIR"/extras/.*; do
+    if [ -f "$dotfile" ]; then
+      local base
+      base=$(basename "$dotfile")
+      linkme "$dotfile" "$HOME/$base"
+    fi
   done
-
-
 
   # LaunchAgent
   log debug "Exposing: .env as a LaunchAgent"
-  cat > "$HOME/Library/LaunchAgents/env-ui.plist" <<EOF
+  cat > "$HOME/Library/LaunchAgents/env-ui.plist" << EOF
       <?xml version="1.0" encoding="UTF-8"?>
       <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
       <plist version="1.0">
@@ -203,33 +196,33 @@ function configure_dotfiles(){
       </plist>
 EOF
 
-  launchctl load "$HOME/Library/LaunchAgents/env-ui.plist" 2>/dev/null
-  launchctl start env-ui 2>/dev/null
-
-  exec "$SHELL" -l
+  launchctl load "$HOME/Library/LaunchAgents/env-ui.plist" 2> /dev/null
+  launchctl start env-ui 2> /dev/null
+  # shellcheck source=/dev/null
+  source ~/.bash_profile
 
   log success "Succesfully configured .dotfiles"
 
 }
 
-function configure_npm(){
+function configure_npm() {
   log info "Installing: NPM packages"
   xargs -n1 npm install -g < "$LIBDIR/packages/npm"
   log success "Succesfully installed NPM packages"
 }
 
-function configure_pm2(){
+function configure_pm2() {
   log info "Configuring: PM2"
   # Create the logs folder beforehand to avoid permision conflicts
   mkdir -p "$HOME/.pm2/logs"
 
-  sudo "$(which pm2)" startup launchd -u "$USER" --hp "$HOME"
-  $(which pm2) install pm2-logrotate
+  sudo pm2 startup launchd -u "$USER" --hp "$HOME"
+  pm2 install pm2-logrotate
 
   log success "Succesfully configured PM2"
 }
 
-function configure_osx(){
+function configure_osx() {
   log info "macOS nitpicking"
 
   # Close any open System Preferences panes, to prevent them from overriding
@@ -316,7 +309,6 @@ function configure_osx(){
   log debug "Restart automatically if the computer freezes"
   sudo systemsetup -setrestartfreeze on
 
-
   log debug "Expand save panel by default"
   defaults write NSGlobalDomain NSNavPanelExpandedStateForSaveMode -bool true
   defaults write NSGlobalDomain NSNavPanelExpandedStateForSaveMode2 -bool true
@@ -331,15 +323,14 @@ function configure_osx(){
   log debug "Check for software updates daily, not just once per week"
   defaults write com.apple.SoftwareUpdate ScheduleFrequency -int 1
 
-  log info "SSD DRIVE BABY"
-  log debug "Disable hibernation (speeds up entering sleep mode)"
-  sudo pmset -a hibernatemode 0
-  log debug "Disable the sudden motion sensor as it’s not useful for SSDs"
-  sudo pmset -a sms 0
+  # log info "SSD DRIVE BABY"
+  # log debug "Disable hibernation (speeds up entering sleep mode)"
+  # sudo pmset -a hibernatemode 0
+  # log debug "Disable the sudden motion sensor as it’s not useful for SSDs"
+  # sudo pmset -a sms 0
 
-
-  log debug "Enable subpixel font rendering on non-Apple LCDs"
-  defaults write NSGlobalDomain AppleFontSmoothing -int 2
+  log info "low res screen workaoround"
+  defaults write -g CGFontRenderingFontSmoothingDisabled -bool NO
 
   log success "Succesfully configured MacOS"
 }
@@ -348,23 +339,20 @@ function confirm() {
   log "💾  Do you want to $1?"
   select option in "Yes" "No"; do
     case $option in
-        Yes )
-            $2
-            break
-            ;;
-        No )
-            log warn "Skipping $1"
-            break
-            ;;
-        *)
-            log error "Please select an option (number)"
-            ;;
+      Yes)
+        $2
+        break
+        ;;
+      No)
+        log warn "Skipping $1"
+        break
+        ;;
+      *)
+        log error "Please select an option (number)"
+        ;;
     esac
   done
 }
-
-
-
 
 # ----------------------------------------------------------------------
 
@@ -373,7 +361,11 @@ header OSX CONFIGURATION SCRIPT
 # Ask for the administrator password upfront
 sudo -v
 # update existing `sudo` time stamp until the script has finished
-while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
+while true; do
+  sudo -n true
+  sleep 60
+  kill -0 "$$" || exit
+done 2> /dev/null &
 
 generateEnv
 
@@ -387,12 +379,9 @@ confirm 'Configure .dotfiles' configure_dotfiles
 
 confirm 'Configure MacOS' configure_osx
 
-if which npm >/dev/null; then
+if command -v npm > /dev/null; then
   confirm 'Install NPM packages' configure_npm
   confirm 'Configure PM2' configure_pm2
 fi
 
 header Done
-
-
-

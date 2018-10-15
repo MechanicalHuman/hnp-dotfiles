@@ -1,3 +1,5 @@
+# shellcheck shell=sh
+# shellcheck disable=SC1117
 # Make Tab autocomplete regardless of filename case
 set completion-ignore-case on
 set completion-map-case on
@@ -52,13 +54,12 @@ set convert-meta off
 
 # SHORCUTS
 
-#Undo a directory change with Option-z
+#Undo a directory change: Option-z
 "\ez": 'cd -\015'
 
-# Clear the screen
+# Clear the screen: Option-k
 "\ek": 'printf "\\33c\\e[3J" \015'
 
-# Reload the shell (i.e. invoke as a login shell)
+# Reload the shell (i.e. invoke as a login shell): Option-r
+# shellcheck disable=SC2016
 "\er": 'exec $SHELL -l \015'
-
-

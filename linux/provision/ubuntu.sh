@@ -142,6 +142,7 @@ mkdir -p "$NPM_CONFIG_PREFIX"
 
 log success 'Succesfully installed NodeJS'
 
+
 # ──────────────────────────────────  PM2  ─────────────────────────────────────
 
 # pm2.keymetrics.io
@@ -196,11 +197,12 @@ log debug 'Installing pretty'
 log trace 'Pretty format for Bunayn logs, like "bunyan -o short" but pretty.'
 npm install @mechanicalhuman/bunyan-pretty -g
 
+
 log success 'Succesfully installed additional NPM packages'
 
 # ────────────────────────────────  Cleanup  ───────────────────────────────────
-
-
+log info 'Cleaning up'
+rm install.sh
 
 # ─────────────────────────────────  DONE  ─────────────────────────────────────
 

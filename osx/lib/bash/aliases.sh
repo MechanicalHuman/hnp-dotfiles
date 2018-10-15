@@ -29,7 +29,7 @@ alias ip-local="ifconfig | grep -Eo 'inet (addr:)?([0-9]*\\.){3}[0-9]*' | grep -
 alias clean-ds="find . -type f -name '*.DS_Store' -ls -delete"
 
 # Recursively delete `node_modules` folders
-alias clean-node="find . -type d -name 'node_modules' -ls -delete"
+alias clean-node="find . -type d -name 'node_modules' -print | xargs -n1 rm -rf"
 
 # Clear DNS cache
 alias dns-cache="sudo killall -HUP mDNSResponder;sudo killall mDNSResponderHelper;sudo dscacheutil -flushcache"
@@ -49,6 +49,9 @@ alias cclear="printf '\\33c\\e[3J'"
 # find . -name .gitattributes | map dirname
 alias map="xargs -n1"
 
+alias rgx="rg --no-heading --no-filename --no-line-number"
+
+
 # Common places
 alias dl="cd ~/Downloads"
 alias dt="cd ~/Desktop"
@@ -56,3 +59,18 @@ alias dt="cd ~/Desktop"
 # Stuff I never really use but cannot delete either because of http://xkcd.com/530/
 alias stfu="osascript -e 'set volume output muted true'"
 alias pumpitup="osascript -e 'set volume 7'"
+
+# ncdu > du
+alias du="ncdu --color dark -rr -x --exclude .git --exclude node_modules"
+
+# bat > cat
+alias cat='bat'
+
+# fzf > ctrl+r
+alias preview="fzf --preview 'bat --color \"always\" {}'"
+
+#htop > top
+alias top="sudo htop"
+
+#tldr > man
+alias help='tldr'

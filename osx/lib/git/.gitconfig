@@ -4,7 +4,7 @@
   whitespace = space-before-tab,-indent-with-non-tab,trailing-space
   trustctime = false
   precomposeunicode = false
-  editor = subl -w
+  editor = code -w
 
 [credential]
   helper = osxkeychain
@@ -43,6 +43,10 @@
 
 [blame]
   date = relative
+
+[pager]
+  diff = diff-so-fancy | less --tabs=1,5 -RFX
+  show = diff-so-fancy | less --tabs=1,5 -RFX
 
 ###############
 ##### UI ######
@@ -97,7 +101,6 @@
             local yolo=0; \
             if [ $# -ne 0 ] && [ "$1" == "--yolo" ]; then yolo=1; shift; fi; \
             if [ $# -ne 0 ]; then message=${*}; fi; \
-            message=\"$message [$(hostname -s)]\"; \
             git status -u -s; \
             echo \"$(tput bold)$(tput setaf 3)> About to add all changes to the staging area$(tput sgr0)\"; \
             git add .; \
@@ -113,7 +116,6 @@
             local yolo=0; \
             if [ $# -ne 0 ] && [ "$1" == "--yolo" ]; then yolo=1; shift; fi; \
             if [ $# -ne 0 ]; then message=${*}; fi; \
-            message=\"$message [$(hostname -s)]\"; \
             git status -u -s; \
             echo \"$(tput bold)$(tput setaf 3)> About to add all changes to the staging area$(tput sgr0)\"; \
             git add .; \
@@ -156,13 +158,13 @@
 
 [url "git@github.com:"]
   insteadOf = "gh:"
+  insteadOf = "github:"
+  insteadOf = "https://github.com/"
+  insteadOf = "git://github.com/"
   pushInsteadOf = "github:"
   pushInsteadOf = "git://github.com/"
   pushInsteadOf = "https://github.com/"
 
-[url "git://github.com/"]
-  insteadOf = "github:"
-  insteadOf = https://github.com/
 
 # GITHUB GIST FIX
 [url "git@gist.github.com:"]

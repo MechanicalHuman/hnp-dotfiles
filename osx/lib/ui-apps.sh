@@ -1,15 +1,14 @@
 #!/bin/bash
 
 if [ -f ~/.env ]; then
-    # shellcheck source=/dev/null
-    source ~/.env
+  # shellcheck source=/dev/null
+  source ~/.env
 fi
 
 if [ -f ~/.config/dotfiles/bash/exports.sh ]; then
-    # shellcheck source=/dev/null
-    source ~/.config/dotfiles/bash/exports.sh
+  # shellcheck source=/dev/null
+  source ~/.config/dotfiles/bash/exports.sh
 fi
-
 
 # expose the env to the ui apps
 # ----------------------------------------------------------------------
@@ -31,32 +30,28 @@ cp -f "$HOME/.config/dotfiles/git/.gitconfig" "$HOME/.gitconfig"
 git config --global user.name "$FULL_NAME"
 git config --global user.email "$EMAIL"
 
-
-cat > "$HOME/Library/Application Support/com.fournova.Tower3/environment.plist" <<EOF
+cat > "$HOME/Library/Application Support/com.fournova.Tower3/environment.plist" << EOF
     <?xml version="1.0" encoding="UTF-8"?>
     <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
     <plist version="1.0">
       <dict>
         <key>PATH</key>
-        <string>"$PATH"</string>
+        <string>$PATH</string>
 
         <key>FULL_NAME</key>
-        <string>"$FULL_NAME"</string>
+        <string>$FULL_NAME</string>
 
         <key>EMAIL</key>
-        <string>"$EMAIL"</string>
+        <string>$EMAIL</string>
 
         <key>HOMEPAGE</key>
-        <string>"$HOMEPAGE"</string>
+        <string>$HOMEPAGE</string>
 
         <key>NPM_TOKEN</key>
-        <string>"$NPM_TOKEN"</string>
+        <string>$NPM_TOKEN</string>
 
         <key>NPM_SCOPE</key>
-        <string>"$NPM_SCOPE"</string>
-
-        <key>VISUAL</key>
-        <string>"$VISUAL"</string>
+        <string>$NPM_SCOPE</string>
       </dict>
     </plist>
 EOF
