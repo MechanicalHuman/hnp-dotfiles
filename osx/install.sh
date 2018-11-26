@@ -115,7 +115,6 @@ function install_homebrew() {
   brew bundle --file="$LIBDIR/packages/Brewfile"
   brew bundle dump --force --global
 
-
   log success "Succesfully installed Homebrew"
   INSTALLED_HOMEBREW=1
 }
@@ -321,11 +320,11 @@ function configure_osx() {
   log debug "Check for software updates daily, not just once per week"
   defaults write com.apple.SoftwareUpdate ScheduleFrequency -int 1
 
-  # log info "SSD DRIVE BABY"
-  # log debug "Disable hibernation (speeds up entering sleep mode)"
-  # sudo pmset -a hibernatemode 0
-  # log debug "Disable the sudden motion sensor as it’s not useful for SSDs"
-  # sudo pmset -a sms 0
+  log info "SSD DRIVE BABY"
+  log debug "Disable hibernation (speeds up entering sleep mode)"
+  sudo pmset -a hibernatemode 0
+  log debug "Disable the sudden motion sensor as it’s not useful for SSDs"
+  sudo pmset -a sms 0
 
   log info "low res screen workaoround"
   defaults write -g CGFontRenderingFontSmoothingDisabled -bool NO
